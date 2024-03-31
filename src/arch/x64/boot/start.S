@@ -14,9 +14,9 @@ _start:
   call setup_page_tables
   call enable_paging
 
-
-  lgdt .pointer
-  ljmp $.code_segment, $long_mode_start
+  lgdt (gdt64_pointer)
+  movw $gdt64_data_seg, %ax
+  ljmp $gdt64_code_seg, $long_mode_start
   
   hlt
 
@@ -125,8 +125,12 @@ stack_top:
 .section .rodata
 gdt64:
   .quad 0
-.code_segment = . - gdt64 
+gdt64_code_entry:
+  .set gdt64_code_seg, gdt64_code_entry - gdt64
   .quad (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53)
-.pointer:
-  .word . - gdt64 - 1
+gdt64_data_entry:
+.set gdt64_data_seg, gdt64_data_entry - gdt64
+.quad (1 << 44) | (1 << 47) | (1 << 41) 
+gdt64_pointer:
+  .word gdt64_pointer - gdt64 - 1
   .quad gdt64
