@@ -1,1 +1,3 @@
-export fn kmain() void {}
+export fn kmain() void {
+    while (true) {}
+}

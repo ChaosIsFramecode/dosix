@@ -1,5 +1,6 @@
 .global _start
 .type _start, @function
+.extern long_mode_start
 
 .section .text
 .code32
@@ -13,9 +14,10 @@ _start:
   call setup_page_tables
   call enable_paging
 
-  lgdt .pointer
-  jmp *%cs:long_mode_start
 
+  lgdt .pointer
+  ljmp $.code_segment, $long_mode_start
+  
   hlt
 
 check_multiboot:
@@ -123,7 +125,7 @@ stack_top:
 .section .rodata
 gdt64:
   .quad 0
-.code_segment = . - gdt64
+.code_segment = . - gdt64 
   .quad (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53)
 .pointer:
   .word . - gdt64 - 1

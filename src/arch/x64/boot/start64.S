@@ -12,6 +12,9 @@ long_mode_start:
   movq %rax, %fs
   movq %rax, %gs
 
+  movl $0x2f4b2f4f, %eax
+  movl %eax, 0xb8000
+  
   call kmain
   cli
   hlt
